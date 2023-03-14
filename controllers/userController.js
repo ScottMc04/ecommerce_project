@@ -9,11 +9,20 @@ const getUsers = (req, res) => {
 };
 
 const getUserById = (req, res) => {
-    const id = parseInt(req.params.userId)
-    pool.query('SELECT * FROM users WHERE userId = $1', [id] ,(error, results) => {
+    const id = parseInt(req.params.userId);
+    pool.query('SELECT * FROM users WHERE userId = $1', [id], (error, results) => {
         if (error) throw error;
         res.status(200).json(results.rows);
-    })
+    });
+};
+
+const getUserByEmail = async (email) => {
+    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    if (result.rows?.length) {
+        return result.rows[0]
+    }
+  
+    return null;
 };
 
 const addUser = (req, res) => {
@@ -53,6 +62,7 @@ const updateUser = (req, res) => {
 
 module.exports = {
     getUsers,
+    getUserByEmail,
     getUserById,
     addUser,
     updateUser
